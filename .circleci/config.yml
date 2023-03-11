@@ -155,26 +155,27 @@ jobs:
           name: Install dependencies
           command: |
             yum install -y tar gzip
-      - run:
-          name: Ensure back-end infrastructure exists
-          command: |
-            aws cloudformation deploy \
-              --template-file .circleci/files/backend.yml \
-              --stack-name "backend" \
-              --parameter-overrides ID=${CIRCLE_WORKFLOW_ID:0:5}
-
       # - run:
-      #     name: Ensure front-end infrastructure exist
+      #     name: Ensure back-end infrastructure exists
       #     command: |
       #       aws cloudformation deploy \
-      #         --template-file .circleci/files/frontend.yml \
+      #         --template-file .circleci/files/backend.yml \
       #         --tags project=udapeople \
-      #         --stack-name "frontend-${CIRCLE_WORKFLOW_ID:0:5}" \
-      #         --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:5}"
+      #         --stack-name "backend" \
+      #         --parameter-overrides ID=${CIRCLE_WORKFLOW_ID:0:5}
+
+      - run:
+          name: Ensure front-end infrastructure exist
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/frontend.yml \
+              --tags project=udapeople \
+              --stack-name "frontend-${CIRCLE_WORKFLOW_ID:0:5}" \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:5}"
       - run:
           name: Add back-end ip to ansible inventory
           command: |
-            aws ec2 describe-instances -cluster default --region us-east-1  --query 'Reservations[*].Instances[*].PublicIpAddress' --output text >> .circleci/ansible/inventory.txt
+            aws ec2 describe-instances --region us-east-1 --query 'Reservations[*].Instances[*].PublicIpAddress' --output text >> .circleci/ansible/inventory.txt
 
       - persist_to_workspace:
           root: ~/
@@ -208,7 +209,7 @@ jobs:
 
   run-migrations:
     docker: 
-      - image: mareimorsy/aws-node
+      - image: fadyeskander/aws-node
 
     steps:
       - checkout
@@ -230,7 +231,7 @@ jobs:
 
   # deploy-frontend:
   #   docker:
-  #     - image: mareimorsy/aws-node
+  #     - image: fadyeskander/aws-node
   #   steps:
   #     - checkout
   #     - run:
@@ -254,7 +255,7 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: ["f5:0d:c2:2b:72:e4:67:d8:50:fc:84:2f:d7:34:14:13"]
+          fingerprints: ["0d:a0:d2:30:e7:40:31:70:0e:69:45:04:ad:36:0b:8c"]
       - run:
           name: Deploy backend
           command: |
@@ -289,8 +290,8 @@ jobs:
           command: |
             export BACKEND_PUBLIC_IP=$(aws ec2 describe-instances --region us-east-1 --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
             
-              URL="http://$BACKEND_PUBLIC_IP:3030/api/status"
-            # URL="http://g00gle.com"
+            # URL="http://$BACKEND_PUBLIC_IP:3030/api/status"
+            URL="http://g00gle.com"
             if curl -s --head ${URL}
             then
               echo "It worked!"
@@ -304,7 +305,7 @@ jobs:
 
   cloudfront-update:
     docker:
-      - image: mareimorsy/aws-node
+      - image: fadyeskander/aws-node
     steps:
       - checkout
       - run:
@@ -345,6 +346,7 @@ jobs:
               aws cloudformation delete-stack --stack-name "frontend-${OldWorkflowID}"
             fi
             
+
 workflows:
   default:
     jobs:
@@ -367,8 +369,8 @@ workflows:
       #     requires: [deploy-infrastructure]
       # - run-migrations
           # requires: [configure-infrastructure]
-      - deploy-backend:
-          requires: [deploy-infrastructure]
+      # - deploy-frontend:
+      #     requires: [deploy-infrastructure]
       # - deploy-backend
           # requires: [run-migrations]
       # - smoke-test:
