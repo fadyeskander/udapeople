@@ -184,7 +184,7 @@ jobs:
       # - destroy_environment
   configure-infrastructure:
     docker:
-      - image: fadyeskander/aws-node
+      - image: mareimorsy/aws-node
     steps:
       - checkout
       - add_ssh_keys:
@@ -250,7 +250,7 @@ jobs:
                     
   deploy-backend:
     docker:
-      - image: fadyeskander/aws-node
+      - image: mareimorsy/aws-node
     steps:
       - checkout
       - add_ssh_keys:
