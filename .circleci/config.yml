@@ -185,7 +185,7 @@ jobs:
       # - destroy_environment
   configure-infrastructure:
     docker:
-      - image: fadyeskander/aws-node
+      - image: mareimorsy/aws-node
     steps:
       - checkout
       - add_ssh_keys:
@@ -209,7 +209,7 @@ jobs:
 
   run-migrations:
     docker: 
-      - image: fadyeskander/aws-node
+      - image: mareimorsy/aws-node
 
     steps:
       - checkout
@@ -231,7 +231,7 @@ jobs:
 
   # deploy-frontend:
   #   docker:
-  #     - image: fadyeskander/aws-node
+  #     - image: mareimorsy/aws-node
   #   steps:
   #     - checkout
   #     - run:
@@ -251,9 +251,9 @@ jobs:
                     
   deploy-backend:
     docker:
-      - image: fadyeskander/aws-node
+      - image: mareimorsy/aws-node
     steps:
-      - checkout
+      - checko
       - add_ssh_keys:
           fingerprints: ["0d:a0:d2:30:e7:40:31:70:0e:69:45:04:ad:36:0b:8c"]
       - run:
@@ -305,7 +305,7 @@ jobs:
 
   cloudfront-update:
     docker:
-      - image: fadyeskander/aws-node
+      - image: mareimorsy/aws-node
     steps:
       - checkout
       - run:
@@ -327,7 +327,7 @@ jobs:
 
   cleanup:
     docker:
-      - image: fadyeskander/aws-node
+      - image: mareimorsy/aws-node
     steps:
       - checkout
       - run:
@@ -365,7 +365,7 @@ workflows:
       #     filters:
       #       branches: 
       #         only: [main]
-         - configure-infrastructure
+      - configure-infrastructure
           # requires: [deploy-infrastructure]
       # - run-migrations
           # requires: [configure-infrastructure]
