@@ -257,8 +257,8 @@ jobs:
       - run:
           name: Deploy backend
           command: |
-            export TYPEORM_HOST=$(aws ec2 describe-instances --region us-east-1 --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
-            echo $TYPEORM_HOST >> .circleci/ansible/inventory.txt
+            export EC2IP=$(aws ec2 describe-instances --region us-east-1 --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
+            echo $EC2IP >> .circleci/ansible/inventory.txt
 
             cd backend
             npm i
@@ -365,11 +365,11 @@ workflows:
       #         only: [main]
       #  - configure-infrastructure
           # requires: [deploy-infrastructure]
-         - run-migrations
+      #  - run-migrations
           # requires: [configure-infrastructure]
       # - deploy-frontend:
       #     requires: [deploy-infrastructure]
-      # - deploy-backend
+        - deploy-backend
           # requires: [run-migrations]
       # - smoke-test:
       #     requires: [deploy-backend, deploy-frontend]
