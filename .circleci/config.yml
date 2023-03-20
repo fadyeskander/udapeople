@@ -216,7 +216,6 @@ jobs:
       - run:
           name: Run migrations
           command: |
-            export TYPEORM_HOST=$(aws ec2 describe-instances --region us-east-1 --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
             cd backend
             npm install
             npm run premigrations
@@ -252,7 +251,7 @@ jobs:
     docker:
       - image: mareimorsy/aws-node
     steps:
-      - checko
+      - checkout
       - add_ssh_keys:
           fingerprints: ["f5:0d:c2:2b:72:e4:67:d8:50:fc:84:2f:d7:34:14:13"]
       - run:
