@@ -249,7 +249,7 @@ jobs:
                     
   deploy-backend:
     docker:
-      - image: cimg/base:stable
+      - image: mareimorsy/aws-node
     steps:
       - checkout
       - add_ssh_keys:
