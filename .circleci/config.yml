@@ -273,9 +273,7 @@ jobs:
             export TYPEORM_ENTITIES=./dist/modules/domain/**/*.entity{.ts,.js}
             export TYPEORM_MIGRATIONS=./dist/migrations/*.ts
           
-            cd ..
-            cd .circleci/ansible
-            cat inventory.txt
+      
             ansible-playbook -i inventory.txt deploy-backend.yml
 
   smoke-test:
