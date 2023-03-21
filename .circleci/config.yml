@@ -267,13 +267,14 @@ jobs:
             cp backend/artifact.tar.gz .circleci/ansible/roles/deploy/files
 
       - run:
-          name: Package backend
+          name: deploy backend
           command: |
             export TYPEORM_MIGRATIONS_DIR=./dist/migrations
             export TYPEORM_ENTITIES=./dist/modules/domain/**/*.entity{.ts,.js}
             export TYPEORM_MIGRATIONS=./dist/migrations/*.ts
           
-            cd ../.circleci/ansible
+            cd ..
+            cd .circleci/ansible
             cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend.yml
 
