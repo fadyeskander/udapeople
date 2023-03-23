@@ -246,7 +246,9 @@ jobs:
             # Build the frontend
             cd frontend
             echo "API_URL=http://$BACKEND_PUBLIC_IP:3030" > .env
+            
             npm install
+            npm i react@16 react-dom@16 react-router-dom@5 @types/react@16 @types/react-dom@16 @types/react-router-dom@5
             npm run build
             # aws s3 sync dist s3://udapeople-project
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:5} --recursive
