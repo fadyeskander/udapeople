@@ -131,7 +131,7 @@ jobs:
       - run:
           name: Scan front-end
           command: |
-            exit 0
+            # exit 0
             npm audit
 
   scan-backend:
