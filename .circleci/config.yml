@@ -318,6 +318,7 @@ jobs:
       - run:
           name: Save Old Workflow ID to kvdb.io
           command: |
+            exit 0
             export OLD_WORKFLOW_ID=$(aws cloudformation \
                       list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
                       --no-paginate --output text)
@@ -378,11 +379,11 @@ workflows:
           # requires: [configure-infrastructure]
       #  - deploy-frontend:
       #    requires: [deploy-infrastructure]
-      #  -   deploy-backend
+         -   deploy-backend
           # requires: [run-migrations]
       #   - smoke-test
       #     requires: [deploy-backend, deploy-frontend]
-         - cloudfront-update
+      #   - cloudfront-update
       #     requires: [smoke-test]
       # - cleanup:
       #     requires: [cloudfront-update]
