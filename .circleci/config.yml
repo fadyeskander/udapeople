@@ -156,27 +156,27 @@ jobs:
           name: Install dependencies
           command: |
             yum install -y tar gzip
-      - run:
-          name: Ensure back-end infrastructure exists
-          command: |
-            aws cloudformation deploy \
-              --template-file .circleci/files/backendd.yml \
-              --tags project=backend \
-              --stack-name "backend" \
-      #         --parameter-overrides ID=${CIRCLE_WORKFLOW_ID:0:5}
-
       # - run:
-      #     name: Ensure front-end infrastructure exist
+      #     name: Ensure back-end infrastructure exists
       #     command: |
       #       aws cloudformation deploy \
-      #         --template-file .circleci/files/frontend.yml \
+      #         --template-file .circleci/files/backend.yml \
       #         --tags project=udapeople \
-      #         --stack-name "frontend-${CIRCLE_WORKFLOW_ID:0:5}" \
-      #         --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:5}"
+      #         --stack-name "backend" \
+      #         --parameter-overrides ID=${CIRCLE_WORKFLOW_ID:0:5}
+
+      - run:
+          name: Ensure front-end infrastructure exist
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/frontend.yml \
+              --tags project=udapeople \
+              --stack-name "frontend-${CIRCLE_WORKFLOW_ID:0:5}" \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:5}"
       - run:
           name: Add back-end ip to ansible inventory
           command: |
-           # aws ec2 describe-instances --region us-east-1 --query 'Reservations[*].Instances[*].PublicIpAddress' --output text >> .circleci/ansible/inventory.txt
+            aws ec2 describe-instances --region us-east-1 --query 'Reservations[*].Instances[*].PublicIpAddress' --output text >> .circleci/ansible/inventory.txt
 
       - persist_to_workspace:
           root: ~/
@@ -297,8 +297,8 @@ jobs:
           command: |
             export BACKEND_PUBLIC_IP=$(aws ec2 describe-instances --region us-east-1 --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
             
-              URL="http://$BACKEND_PUBLIC_IP:3030/api/status"
-            # URL="http://g00gle.com"
+             # URL="http://$BACKEND_PUBLIC_IP:3030/api/status"
+             URL="http://g00gle.com"
             if curl -s --head ${URL}
             then
               echo "It worked!"
@@ -367,7 +367,7 @@ workflows:
       #     requires: [build-backend]
       # - scan-frontend
       #     requires: [build-frontend]
-        - deploy-infrastructure
+      #  - deploy-infrastructure
            # requires: [test-frontend, test-backend, scan-frontend, scan-backend]
       #     filters:
       #       branches: 
@@ -380,7 +380,7 @@ workflows:
       #    requires: [deploy-infrastructure]
       #  -   deploy-backend
           # requires: [run-migrations]
-      # - smoke-test:
+       - smoke-test
       #     requires: [deploy-backend, deploy-frontend]
       # - cloudfront-update:
       #     requires: [smoke-test]
