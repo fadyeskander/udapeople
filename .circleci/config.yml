@@ -379,11 +379,11 @@ workflows:
           # requires: [configure-infrastructure]
       #  - deploy-frontend:
       #    requires: [deploy-infrastructure]
-         -   deploy-backend
+      #  -   deploy-backend
           # requires: [run-migrations]
       #   - smoke-test
       #     requires: [deploy-backend, deploy-frontend]
       #   - cloudfront-update
       #     requires: [smoke-test]
-      # - cleanup:
+         - cleanup
       #     requires: [cloudfront-update]
