@@ -155,23 +155,23 @@ jobs:
           name: Install dependencies
           command: |
             yum install -y tar gzip
-      - run:
-          name: Ensure back-end infrastructure exists
-          command: |
-            aws cloudformation deploy \
-              --template-file .circleci/files/backend.yml \
-              --tags project=back \
-              --stack-name "back" \
-              --parameter-overrides ID=${CIRCLE_WORKFLOW_ID:0:5}
-
       # - run:
-      #     name: Ensure front-end infrastructure exist
+      #     name: Ensure back-end infrastructure exists
       #     command: |
       #       aws cloudformation deploy \
-      #         --template-file .circleci/files/frontend.yml \
-      #         --tags project=udapeople \
-      #         --stack-name "frontend-${CIRCLE_WORKFLOW_ID:0:5}" \
-      #         --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:5}"
+      #         --template-file .circleci/files/backend.yml \
+      #         --tags project=back \
+      #         --stack-name "back" \
+      #         --parameter-overrides ID=${CIRCLE_WORKFLOW_ID:0:5}
+
+      - run:
+          name: Ensure front-end infrastructure exist
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/frontend.yml \
+              --tags project=front \
+              --stack-name "front-${CIRCLE_WORKFLOW_ID:0:5}" \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:5}"
       - run:
           name: Add back-end ip to ansible inventory
           command: |
@@ -361,12 +361,12 @@ workflows:
       #     requires: [build-backend]
       # - scan-frontend:
       #     requires: [build-frontend]
-       - deploy-infrastructure:
+      # - deploy-infrastructure:
       #     # requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-            filters:
-              branches: 
-                only: [master]
-      #- configure-infrastructure
+            # filters:
+            #   branches: 
+            #     only: [master]
+      - configure-infrastructure
           # requires: [deploy-infrastructure]
       # - run-migrations
           # requires: [configure-infrastructure]
