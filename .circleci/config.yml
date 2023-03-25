@@ -255,16 +255,21 @@ jobs:
       - image: mareimorsy/aws-node
     steps:
       - checkout
+
       - add_ssh_keys:
           fingerprints: ["f5:0d:c2:2b:72:e4:67:d8:50:fc:84:2f:d7:34:14:13"]
+      - restore_cache:
+          keys: [backend-build]
+      - attach_workspace:
+          at: ~/
       - run:
           name: Deploy backend
+          
           command: |
             export TYPEORM_HOST=$(aws ec2 describe-instances --region us-east-1 --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
             echo $TYPEORM_HOST >> .circleci/ansible/inventory.txt
-
             cd backend
-            npm i
+            npm install
             npm run build
             echo "TYPEORM_ENTITIES=./dist/modules/domain/**/*.entity{.ts,.js}" > .env
             echo "TYPEORM_HOST=${TYPEORM_HOST}" >> .env
@@ -279,6 +284,7 @@ jobs:
             ls ../.circleci/ansible/roles/deploy/
             cd ../.circleci/ansible
             ansible-playbook -i inventory.txt deploy-backend.yml
+
       # Here's where you will add some code to rollback on failure  
 
   smoke-test:
