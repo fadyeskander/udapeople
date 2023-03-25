@@ -79,8 +79,8 @@ jobs:
       - image: cimg/node:13.8.0
     steps:
       - checkout
-      - restore_cache:
-          keys: [backend-deps]
+      # - restore_cache:
+      #     keys: [backend-deps]
       - run:
           name: Back-end build
           command: |
@@ -88,9 +88,9 @@ jobs:
             cd backend
             npm install
             npm run build
-      - save_cache:
-          paths: [backend/node_modules]
-          key: backend-deps
+      # - save_cache:
+      #     paths: [backend/node_modules]
+      #     key: backend-deps
 
   test-frontend:
     docker:
