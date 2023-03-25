@@ -148,7 +148,7 @@ jobs:
           command: |
             exit 0
             npm audit
-    notify_on_success:
+    backend:
       requires:
         - scan-backend
 
