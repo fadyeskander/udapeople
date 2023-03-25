@@ -84,7 +84,7 @@ jobs:
       - run:
           name: Back-end build
           command: |
-            exit 0
+            #exit 0
             cd backend
             npm install
             npm run build
@@ -265,10 +265,10 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints: ["f5:0d:c2:2b:72:e4:67:d8:50:fc:84:2f:d7:34:14:13"]
-      # - attach_workspace:
-      #     at: ~/
-      # - restore_cache:
-      #     keys: [backend-deps] 
+      - attach_workspace:
+          at: ~/
+      - restore_cache:
+          keys: [backend-deps] 
       - run:
           name: install dependencies
           command: |
@@ -363,7 +363,7 @@ workflows:
   default:
     jobs:
       # - build-frontend
-      # - build-backend
+        - build-backend
       # - test-frontend
       #     requires: [build-frontend]
       # - test-backend
@@ -383,7 +383,7 @@ workflows:
           # requires: [configure-infrastructure]
       #   - deploy-frontend
       #    requires: [deploy-infrastructure]
-        -   deploy-backend
+      #  -   deploy-backend
           # requires: [run-migrations]
       #   - smoke-test
       #     requires: [deploy-backend, deploy-frontend]
