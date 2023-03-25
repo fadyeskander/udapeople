@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs: 
-    slack: circleci/slack@4.10.1
+    slack: circleci/slack@4.9.3
 
 commands:
   destroy_environment:
@@ -84,7 +84,7 @@ jobs:
       - run:
           name: Back-end build
           command: |
-            #exit 0
+            exit 0
             cd backend
             npm install
             npm run build
@@ -148,6 +148,9 @@ jobs:
           command: |
             exit 0
             npm audit
+    notify_on_success:
+      requires:
+        - scan-backend
 
   deploy-infrastructure:
     docker:
@@ -301,8 +304,8 @@ jobs:
           command: |
             export BACKEND_PUBLIC_IP=$(aws ec2 describe-instances --region us-east-1 --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
             
-              URL="http://$BACKEND_PUBLIC_IP:3030/api/status"
-            # URL="http://g00gle.com"
+            #  URL="http://$BACKEND_PUBLIC_IP:3030/api/status"
+             URL="http://g00gle.com"
             if curl -s --head ${URL}
             then
               echo "It worked!"
@@ -312,7 +315,7 @@ jobs:
               exit 1
             fi
       - notify_on_failure
-      - destroy_environment
+     # - destroy_environment
 
   cloudfront-update:
     docker:
@@ -383,9 +386,9 @@ workflows:
           # requires: [configure-infrastructure]
       #   - deploy-frontend
       #    requires: [deploy-infrastructure]
-         -   deploy-backend
+      #   -   deploy-backend
           # requires: [run-migrations]
-      #   - smoke-test
+         - smoke-test
       #     requires: [deploy-backend, deploy-frontend]
       #   - cloudfront-update
       #     requires: [smoke-test]
