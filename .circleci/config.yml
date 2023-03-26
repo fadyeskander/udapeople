@@ -75,7 +75,7 @@ jobs:
 
   build-backend:
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -86,9 +86,9 @@ jobs:
             cd backend
             npm install
             npm run build
-      - save_cache:
-          paths: [backend/node_modules]
-          key: backend-build
+      # - save_cache:
+      #     paths: [backend/node_modules]
+      #     key: backend-build
 
   test-frontend:
     docker:
@@ -260,8 +260,8 @@ jobs:
 
       - add_ssh_keys:
           fingerprints: ["f5:0d:c2:2b:72:e4:67:d8:50:fc:84:2f:d7:34:14:13"]
-      - restore_cache:
-          keys: [backend-build]
+      # - restore_cache:
+      #     keys: [backend-build]
       - attach_workspace:
           at: ~/
       - run:
@@ -380,7 +380,7 @@ workflows:
           # requires: [configure-infrastructure]
       #  - deploy-frontend
       #     requires: [deploy-infrastructure]
-      #   - deploy-backend
+        #  - deploy-backend
           # requires: [run-migrations]
       # - smoke-test:
       #     requires: [deploy-backend, deploy-frontend]
