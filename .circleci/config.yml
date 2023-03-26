@@ -151,27 +151,29 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
+      - add_ssh_keys:
+          fingerprints: ["f5:0d:c2:2b:72:e4:67:d8:50:fc:84:2f:d7:34:14:13"]
       - run:
           name: Install dependencies
           command: |
             yum install -y tar gzip
-      # - run:
-      #     name: Ensure back-end infrastructure exists
-      #     command: |
-      #       aws cloudformation deploy \
-      #         --template-file .circleci/files/backend.yml \
-      #         --tags project=back \
-      #         --stack-name "back" \
-      #         --parameter-overrides ID=${CIRCLE_WORKFLOW_ID:0:5}
-
       - run:
-          name: Ensure front-end infrastructure exist
+          name: Ensure back-end infrastructure exists
           command: |
             aws cloudformation deploy \
-              --template-file .circleci/files/frontend.yml \
-              --tags project=front \
-              --stack-name "front-${CIRCLE_WORKFLOW_ID:0:5}" \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:5}"
+              --template-file .circleci/files/backend.yml \
+              --tags project=backend-deploy \
+              --stack-name "backend-deploy" \
+              --parameter-overrides ID=${CIRCLE_WORKFLOW_ID:0:5}
+
+      # - run:
+      #     name: Ensure front-end infrastructure exist
+      #     command: |
+      #       aws cloudformation deploy \
+      #         --template-file .circleci/files/frontend.yml \
+      #         --tags project=front \
+      #         --stack-name "front-${CIRCLE_WORKFLOW_ID:0:5}" \
+      #         --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:5}"
       - run:
           name: Add back-end ip to ansible inventory
           command: |
@@ -205,7 +207,7 @@ jobs:
             aws ec2 describe-instances --region us-east-1 --query 'Reservations[*].Instances[*].PublicIpAddress' --output text >> inventory.txt
             cat inventory.txt
             ansible-playbook -i inventory.txt configure-server.yml -vv
-            #ansible-playbook -i inventory.txt prometheus-exporter.yml -vv
+        # ansible-playbook -i inventory.txt prometheus-exporter.yml -vv
       # Here's where you will add some code to rollback on failure      
 
   run-migrations:
@@ -258,15 +260,15 @@ jobs:
 
       - add_ssh_keys:
           fingerprints: ["f5:0d:c2:2b:72:e4:67:d8:50:fc:84:2f:d7:34:14:13"]
-      - restore_cache:
-          keys: [backend-build]
-      - attach_workspace:
-          at: ~/
+      # - restore_cache:
+      #     keys: [backend-build]
+      # - attach_workspace:
+      #     at: ~/
       - run:
           name: Deploy backend
           
           command: |
-            export TYPEORM_HOST=54.84.13.169
+            export TYPEORM_HOST=$(aws ec2 describe-instances --region us-east-1 --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
             echo $TYPEORM_HOST >> .circleci/ansible/inventory.txt
             cd backend
             npm install
@@ -367,18 +369,18 @@ workflows:
       #     requires: [build-backend]
       # - scan-frontend:
       #     requires: [build-frontend]
-      # - deploy-infrastructure:
+       - deploy-infrastructure:
       #     # requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-            # filters:
-            #   branches: 
-            #     only: [master]
+            filters:
+              branches: 
+                only: [master]
       # - configure-infrastructure
           # requires: [deploy-infrastructure]
       # - run-migrations
           # requires: [configure-infrastructure]
       #  - deploy-frontend
       #     requires: [deploy-infrastructure]
-         - deploy-backend
+        #  - deploy-backend
           # requires: [run-migrations]
       # - smoke-test:
       #     requires: [deploy-backend, deploy-frontend]
