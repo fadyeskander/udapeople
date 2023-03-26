@@ -257,12 +257,12 @@ jobs:
       - image: mareimorsy/aws-node
     steps:
       - checkout
-      - add_ssh_keys:
-          fingerprints: ["f5:0d:c2:2b:72:e4:67:d8:50:fc:84:2f:d7:34:14:13"]
+      # - add_ssh_keys:
+      #     fingerprints: ["f5:0d:c2:2b:72:e4:67:d8:50:fc:84:2f:d7:34:14:13"]
       # - restore_cache:
       #     keys: [backend-build]
-      # - attach_workspace:
-      #     at: ~/
+      - attach_workspace:
+          at: ~/
       - run:
           name: Deploy back-end
           
