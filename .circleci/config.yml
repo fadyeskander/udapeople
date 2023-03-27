@@ -49,7 +49,7 @@ commands:
             # Logic for reverting the database state
             if (( $SUCCESS == 1 ));
             then
-            echo pwd
+            echopwd
              # npm install
               npm run migration:revert
             fi
@@ -312,7 +312,7 @@ jobs:
               exit 1
             fi
       # - notify_on_failure
-      - destroy_environment
+      # - destroy_environment
       - revert-migrations
 
   cloudfront-update:
