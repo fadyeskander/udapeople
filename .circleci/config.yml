@@ -9,16 +9,15 @@ commands:
     parameters:
       Workflow_ID:
         type: string
-        default: ${CIRCLE_WORKFLOW_ID:0:7}
+        default: ${CIRCLE_WORKFLOW_ID:0:5}
     steps:
       - run:
           name: Destroy environment
           when: on_fail
           command: |
-            aws cloudformation delete-stack --stack-name frontend-3629c
-            aws s3 rm s3://udapeople-38c01 --recursive
-            aws cloudformation delete-stack --stack-name frontend-b405d
-            
+            aws cloudformation delete-stack --stack-name backend-${CIRCLE_WORKFLOW_ID:0:5}
+            aws s3 rm s3://udapeople-<<parameters.Workflow_ID>> --recursive
+            aws cloudformation delete-stack --stack-name frontend-<< parameters.Workflow_ID >>
   notify_on_failure:
       steps:
         - slack/notify:
@@ -44,13 +43,13 @@ commands:
           name: Revert migrations
           when: on_fail
           command: |
-            SUCCESS=1
-          
+            SUCCESS=$(curl --insecure  https://kvdb.io/${KVDB_BUCKET}/migration_<< parameters.Workflow_ID >>)
+            echo "$SUCCESS"
             # Logic for reverting the database state
             if (( $SUCCESS == 1 ));
             then
-            echopwd
-             # npm install
+              cd ~/project/backend
+              npm install
               npm run migration:revert
             fi
             
@@ -301,18 +300,18 @@ jobs:
           command: |
             export BACKEND_PUBLIC_IP=$(aws ec2 describe-instances --region us-east-1 --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
             
-            #URL="http://$BACKEND_PUBLIC_IP:3030/api/status"
-             URL="http://g00gle.com"
+            # URL="http://$BACKEND_PUBLIC_IP:3030/api/status"
+            URL="http://g00gle.com"
             if curl -s --head ${URL}
             then
               echo "It worked!"
-              # exit 0
+              exit 0
             else
               echo "Rolling Back"
               exit 1
             fi
       # - notify_on_failure
-      # - destroy_environment
+      - destroy_environment
       - revert-migrations
 
   cloudfront-update:
