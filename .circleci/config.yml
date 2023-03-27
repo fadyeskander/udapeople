@@ -18,6 +18,7 @@ commands:
             aws cloudformation delete-stack --stack-name frontend-3629c
             aws s3 rm s3://udapeople-38c01 --recursive
             aws cloudformation delete-stack --stack-name frontend-b405d
+            
   notify_on_failure:
       steps:
         - slack/notify:
@@ -48,7 +49,7 @@ commands:
             # Logic for reverting the database state
             if (( $SUCCESS == 1 ));
             then
-              cd ~/project/backend
+              cd backend
              # npm install
               npm run migration:revert
             fi
