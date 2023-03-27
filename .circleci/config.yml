@@ -49,6 +49,7 @@ commands:
             # Logic for reverting the database state
             if (( $SUCCESS == 1 ));
             then
+            echo pwd
              # npm install
               npm run migration:revert
             fi
