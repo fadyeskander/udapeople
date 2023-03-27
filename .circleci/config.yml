@@ -49,9 +49,6 @@ commands:
             # Logic for reverting the database state
             if (( $SUCCESS == 1 ));
             then
-              ls
-              pwd
-              cd backend
              # npm install
               npm run migration:revert
             fi
