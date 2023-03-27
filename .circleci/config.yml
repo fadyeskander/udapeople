@@ -15,9 +15,9 @@ commands:
           name: Destroy environment
           when: on_fail
           command: |
-            aws cloudformation delete-stack --stack-name frontend-35528
+            aws cloudformation delete-stack --stack-name frontend-3629c
             aws s3 rm s3://udapeople-38c01 --recursive
-            aws cloudformation delete-stack --stack-name frontend-40f53
+            aws cloudformation delete-stack --stack-name frontend-b405d
   notify_on_failure:
       steps:
         - slack/notify:
@@ -43,7 +43,7 @@ commands:
           name: Revert migrations
           when: on_fail
           command: |
-            SUCCESS=$(curl --insecure  https://kvdb.io/${KVDB_BUCKET}/migration_<< parameters.Workflow_ID >>)
+            SUCCESS=1
           
             # Logic for reverting the database state
             if (( $SUCCESS == 1 ));
